@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\User;
 
 class AuthController extends Controller
@@ -12,38 +14,46 @@ class AuthController extends Controller
      *
      * @param  [string] name
      * @param  [string] email
+     * @param  [string] phone
+     * @param  [string] address
      * @param  [string] password
      * @return [string] message
      * @return [json] user object
      */
-    public function store(Request $request)
+    public function register(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:5'
+            'name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'phone' => 'required|numeric',
+            'address' => 'required|string',
+            'password' => 'required|string|min:5'
         ]);
 
         $name = $request->input('name');
         $email = $request->input('email');
+        $phone = $request->input('phone');
+        $address = $request->input('address');
         $password = $request->input('password');
 
         $user = new User([
             'name' => $name,
             'email' => $email,
+            'phone' => $phone,
+            'address' => $address,
             'password' => bcrypt($password)
         ]);
 
         if ($user->save()) {
-            $user->signin = [
-                'href' => 'api/v1/user/signin',
+            $user->login = [
+                'href' => 'api/v1/user/login',
                 'method' => 'POST',
                 'params' => 'email, password'
             ];
 
             $response = [
                 'msg' => 'User created',
-                'data' => $user
+                'user' => $user
             ];
 
             return response()->json($response, 201);
@@ -65,11 +75,11 @@ class AuthController extends Controller
      * @return [string] token_type
      * @return [string] expires_at
      */
-    public function signin(Request $request)
+    public function login(Request $request)
     {
         $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:5'
+            'email' => 'required|string|email',
+            'password' => 'required|string|min:5'
         ]);
 
         $email = $request->input('email');
@@ -134,6 +144,11 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        $response = [
+            'msg' => 'User created',
+            'user' => $request->user()
+        ];
+        
+        return response()->json($response, 200);
     }
 }
