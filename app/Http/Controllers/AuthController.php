@@ -142,11 +142,50 @@ class AuthController extends Controller
      *
      * @return [json] user object
      */
-    public function user(Request $request)
+    public function userCurrent(Request $request)
     {
         $response = [
-            'msg' => 'User created',
+            'msg' => 'User exist',
             'user' => $request->user()
+        ];
+        
+        return response()->json($response, 200);
+    }
+
+    /**
+     * Get User by id
+     *
+     * @param  [integer] id
+     * @return [json] user object
+     */
+    public function userById(Request $request, int $id)
+    {
+        if ($user = User::where('id', $id)->first()) {
+            $response = [
+                'msg' => 'User exist',
+                'user' => $user
+            ];
+
+            return response()->json($response, 200);
+        }
+
+        $response = [
+            'msg' => 'User not found',
+            'user' => $user
+        ];
+        return response()->json($response, 404);
+    }
+
+    /**
+     * Get all Users
+     *
+     * @return [json] user list object except current user
+     */
+    public function usersAll(Request $request)
+    {
+        $response = [
+            'msg' => 'Successfully get all users data',
+            'users' => $users = User::where('id', '!=', auth()->id())->get()
         ];
         
         return response()->json($response, 200);

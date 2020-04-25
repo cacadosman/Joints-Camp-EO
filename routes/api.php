@@ -26,7 +26,9 @@ Route::group(['prefix' => 'v1'], function() {
         'uses' => 'AuthController@login'
     ]);
     Route::group(['middleware' => 'auth:api'], function() {
-          Route::get('user/logout', 'AuthController@logout');
-          Route::get('user', 'AuthController@user');
+        Route::get('/user/logout', 'AuthController@logout');
+        Route::get('/user', 'AuthController@userCurrent');
+        Route::get('/user/{id}', 'AuthController@userById');
+        Route::get('/users', 'AuthController@usersAll');
     });
 });
