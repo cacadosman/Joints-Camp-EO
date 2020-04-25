@@ -32,5 +32,6 @@ Route::group(['prefix' => 'v1'], function() {
         Route::get('/users', 'AuthController@usersAll');
 
         Route::get('/companies', 'CompanyController@search');
+        Route::get('/companies/{id}', 'CompanyController@get');
     });
 });
