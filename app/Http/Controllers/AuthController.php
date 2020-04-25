@@ -27,6 +27,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
             'phone' => 'required|numeric',
             'address' => 'required|string',
+            'role' => 'required|string',
             'password' => 'required|string|min:5'
         ]);
 
@@ -35,13 +36,24 @@ class AuthController extends Controller
         $phone = $request->input('phone');
         $address = $request->input('address');
         $password = $request->input('password');
+        $role = $request->input('role');
+
+        if (strtolower($role) == 'company')
+        {
+            $role = 'company';
+        }
+        else
+        {
+            $role = 'eo';
+        }
 
         $user = new User([
             'name' => $name,
             'email' => $email,
             'phone' => $phone,
             'address' => $address,
-            'password' => bcrypt($password)
+            'password' => bcrypt($password),
+            'role' => $role
         ]);
 
         if ($user->save()) {
