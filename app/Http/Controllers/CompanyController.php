@@ -22,4 +22,23 @@ class CompanyController extends Controller
                 'data' => $companies
             ], 200);
     }
+
+    public function get($id)
+    {
+        $company = User::find($id);
+        if ($company == null || $company->role == 'eo')
+        {
+            return response()
+                ->json([
+                    'success' => false,
+                    'message' => 'Company tidak ditemukan'
+                ], 200);
+        }
+
+        return response()
+            ->json([
+                'success' => true,
+                'data' => $company
+            ], 200);
+    }
 }
