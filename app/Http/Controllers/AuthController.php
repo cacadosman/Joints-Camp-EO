@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\User;
@@ -22,7 +23,7 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
             'phone' => 'required|numeric',
@@ -30,6 +31,13 @@ class AuthController extends Controller
             'role' => 'required|string',
             'password' => 'required|string|min:5'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+            ]);
+        }
 
         $name = $request->input('name');
         $email = $request->input('email');
@@ -64,18 +72,20 @@ class AuthController extends Controller
             ];
 
             $response = [
-                'msg' => 'User created',
-                'user' => $user
+                'success' => true,
+                'message' => 'User created',
+                'data' => $user
             ];
 
             return response()->json($response, 201);
         }
 
         $response = [
-            'msg' => 'An error occured'
+            'success' => false,
+            'message' => 'An error occured'
         ];
 
-        return response()->json($response, 404);
+        return response()->json($response, 200);
     }
 
     /**
