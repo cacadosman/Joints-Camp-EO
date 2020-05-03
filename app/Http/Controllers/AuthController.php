@@ -99,10 +99,17 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string|min:5'
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+            ]);
+        }
 
         $email = $request->input('email');
         $password = $request->input('password');
@@ -116,7 +123,10 @@ class AuthController extends Controller
             $token = null;
 
             if(!Auth::attempt($credentials)) {
-                return response()->json(['message' => 'Unauthorized'], 401);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized'
+                ], 401);
             }
 
             $tokenResult = $user->createToken('Personal Access Token');
@@ -125,8 +135,9 @@ class AuthController extends Controller
             $token->save();
 
             $response = [
-                'msg' => 'Successfully signed in',
-                'user' => $user,
+                'success' => true,
+                'message' => 'Successfully signed in',
+                'data' => $user,
                 'access_token' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',
                 'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
@@ -136,11 +147,11 @@ class AuthController extends Controller
         }
 
         $response = [
-            'msg' => 'An error occured'
+            'success' => false,
+            'message' => 'An error occured'
         ];
 
-        return response()->json($response, 404);
-
+        return response()->json($response, 200);
     }
 
     /**
@@ -153,7 +164,8 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
 
         $response = [
-            'msg' => 'Successfully logged out'
+            'success' => true,
+            'message' => 'Successfully logged out'
         ];
 
         return response()->json($response, 200);
