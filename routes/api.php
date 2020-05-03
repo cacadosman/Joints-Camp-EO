@@ -27,9 +27,9 @@ Route::group(['prefix' => 'v1'], function() {
     ]);
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('/user/logout', 'AuthController@logout');
-        Route::get('/user', 'AuthController@userCurrent');
-        Route::get('/user/{id}', 'AuthController@userById');
-        Route::get('/users', 'AuthController@usersAll');
+        Route::get('/user', 'UserController@getCurrent');
+        Route::get('/user/{id}', 'UserController@getById');
+        Route::get('/users', 'UserController@getAll');
 
         Route::get('/companies', 'CompanyController@search');
         Route::get('/companies/{id}', 'CompanyController@get');
