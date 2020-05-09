@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProposalTable extends Migration
+class CreateProposalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -30,6 +30,6 @@ class CreateProposalTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('proposal');
+        Schema::dropIfExists('proposals');
     }
 }
