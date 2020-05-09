@@ -33,5 +33,8 @@ Route::group(['prefix' => 'v1'], function() {
 
         Route::get('/companies', 'CompanyController@search');
         Route::get('/companies/{id}', 'CompanyController@get');
+
+        Route::post('/proposal/upload', ['UploadController@upload']);
     });
+    
 });
