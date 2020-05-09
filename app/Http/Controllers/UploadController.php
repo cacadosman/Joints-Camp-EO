@@ -9,7 +9,7 @@ class UploadController extends Controller
 {
     public function upload(Request $request)
     {
-        $user_id = auth()->id();
+        $user = auth()->user();
 
         $category = $request->input('category');
         $description = $request->input('description');
@@ -19,16 +19,18 @@ class UploadController extends Controller
         if ($file) {
             $fileName = str_replace(' ', '_', $file->getClientOriginalName());
             $destinationPath = public_path('uploads/images');
-            $file->move($destinationPath, $fileName);
 
             $proposal = new Proposal([
-                'directory' => $destinationPath,
+                'directory' => $fileName,
                 'category' => $category,
                 'description' => $description,
                 'event_date' => $event_date
             ]);
 
             if ($proposal->save()) {
+                $proposal->users()->attach([$user->id]);
+                $file->move($destinationPath, $fileName);
+
                 $response = [
                     'success' => true,
                     'message' => 'File uploaded',

@@ -15,7 +15,7 @@ class CreateProposalsTable extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
-            $table->string('directory')->unique();
+            $table->string('directory');
             $table->string('category');
             $table->string('description');
             $table->timestamp('event_date')->nullable();
